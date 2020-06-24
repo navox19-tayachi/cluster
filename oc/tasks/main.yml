@@ -1,0 +1,62 @@
+---
+- name: "NODES STATUS "
+  shell: "oc get nodes"
+  register: "output"
+
+- debug: var=output.stdout_lines
+
+- name: Create a directory if it does not exist
+  file:
+    path: /root/template
+    state: directory
+    mode: '0755'
+
+- name: Create openshift project
+  shell: "oc create namespace {{ namespace }}"
+  register: "output"
+  ignore_errors: yes 
+
+- debug: var=output.stdout_lines
+
+- name: pointe to the projecte
+  shell: "oc project {{ namespace }}"
+
+
+#- name: templating
+#  template:
+#    src: pod.tpl
+#    dest: "/root/template/pod{{ node1 }}.yaml"
+
+- name: Ansible template with_items example.
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0777
+  with_items:
+    - {src: 'pod1.tpl',dest: '/root/template/pod1-{{ node1 }}.yaml'}
+    - {src: 'pod2.tpl',dest: '/root/template/pod2-{{ node2 }}.yaml'}
+    - {src: 'pod3.tpl',dest: '/root/template/pod3-{{ node3 }}.yaml'}
+#   - {src: 'pod4.tpl',dest: '/root/template/pod1-{{ node4 }}.yaml'}
+#   - {src: 'pod5.tpl',dest: '/root/template/pod2-{{ node5 }}.yaml'}
+#   - {src: 'pod6.tpl',dest: '/root/template/pod3-{{ node6 }}.yaml'}
+
+
+
+- name: Create pod to {{ namespace }} with 
+  shell: "oc create -f /root/template/pod1-{{ node1 }}.yaml "
+  register: "output"
+
+- debug: var=output.stdout_lines
+
+- name: "waiting for pod to be created 30 sec Timeout"
+  wait_for:
+    timeout: 30
+  delegate_to: localhost
+
+ 
+
+- name: "NODES STATUS "
+  shell: " oc get pods -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,NodeName:.spec.nodeName,STATUS:.status.phase"
+  register: "output"
+- debug: var=output.stdout_lines
+
