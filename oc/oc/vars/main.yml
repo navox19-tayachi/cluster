@@ -2,8 +2,11 @@
 #name must be in lower case 
 namespace: ansible
 
-
+nodes:
+  - name: node1
+    value: node
+  - name: node2
 # nodes that will be tested 
-node1 : eeeeeeeeeeeeeeeeeeeee 
+node1 : ocp4-5-compute-1.ocp4-5.adlere.priv 
 node2 : ocp4-5-compute-0.ocp4-5.adlere.priv
 node3 : ocp4-5-compute-1.ocp4-5.adlere.priv

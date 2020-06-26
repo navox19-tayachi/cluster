@@ -21,12 +21,6 @@
 - name: pointe to the projecte
   shell: "oc project {{ namespace }}"
 
-
-#- name: templating
-#  template:
-#    src: pod.tpl
-#    dest: "/root/template/pod{{ node1 }}.yaml"
-
 - name: Ansible template with_items example.
   template:
     src: "{{ item.src }}"
@@ -41,30 +35,30 @@
 #   - {src: 'pod6.tpl',dest: '/root/template/pod3-{{ node6 }}.yaml'}
 
 
-
-- name: Create pod to {{ namespace }} with 
+- name: Create pod in  namespace :{{ namespace }} in node {{ node1 }}
   shell: "oc create -f /root/template/pod1-{{ node1 }}.yaml "
   register: "output"
-
 - debug: var=output.stdout_lines
+  
+- set_fact:
+    myvalue: "{{ output.stdout | regex_search(('nginx-[1-9]*')) }}"
+- debug:
+    var: myvalue
 
-- name: "waiting for pod to be created 30 sec Timeout"
+
+
+
+- name: "waiting for pod to be created 20 sec Timeout"
   wait_for:
-    timeout: 30
+    timeout: 20
   delegate_to: localhost
 
- 
-- name: "pod STATUS "
-  shell: " oc get pod "
-  register: "output"
-- debug: var=output.stdout_lines
 
 - name: "NODES STATUS "
   shell: " oc get pods -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,NodeName:.spec.nodeName,STATUS:.status.phase"
   register: "output"
 - debug: var=output.stdout_lines
 
-- local_action: copy content={{ output }} dest=/root/output.txt
 
 
 
@@ -74,4 +68,12 @@
 
 
 
+
+
+
+
+
+
+
+- include: cluster.yml
 
