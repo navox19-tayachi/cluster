@@ -1,0 +1,96 @@
+---
+- name: "NODES STATUS "
+  shell: "oc get nodes"
+  register: "output"
+
+- debug: var=output.stdout_lines
+
+- name: Create a directory if it does not exist
+  file:
+    path: /root/template
+    state: directory
+    mode: '0755'
+
+- name: Create openshift Namespace {{ namespace }}
+  shell: "oc create namespace {{ namespace }}"
+  register: "output"
+  ignore_errors: yes
+
+- debug: var=output.stdout_lines
+
+- name: pointe to the projecte
+  shell: "oc project {{ namespace }}"
+
+- name: Generating openshift templates for pods
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0777
+  with_items:
+    - {src: 'pod1.tpl',dest: '/root/template/pod1-{{ node1 }}.yaml'}
+    - {src: 'pod2.tpl',dest: '/root/template/pod2-{{ node2 }}.yaml'}
+    - {src: 'pod3.tpl',dest: '/root/template/pod3-{{ node3 }}.yaml'}
+#   - {src: 'pod4.tpl',dest: '/root/template/pod1-{{ node4 }}.yaml'}
+#   - {src: 'pod5.tpl',dest: '/root/template/pod2-{{ node5 }}.yaml'}
+#   - {src: 'pod6.tpl',dest: '/root/template/pod3-{{ node6 }}.yaml'}
+
+
+- name: Create pod in  NAMESPACE=  {{ namespace }} in NODE = {{ node1 }}
+  shell: "oc create -f /root/template/pod1-{{ node1 }}.yaml "
+  register: "output"
+- debug: var=output.stdout_lines
+
+- set_fact:
+    podname: "{{ output.stdout | regex_search(('nginx-[0-9]*')) }}"
+- debug:
+    var: podname
+
+
+- name: " expose Pod {{ podname }}    "
+  shell: "oc expose pod  {{ podname }}  --port=80 --target-port=80 --type=ClusterIP"
+  register: output
+- debug: var=output.stdout_lines
+
+- name: "waiting for pod to be created 20 sec Timeout"
+  wait_for:
+    timeout: 20
+  delegate_to: localhost
+
+
+
+
+- name: " Describe exposed service  "
+  shell: "oc describe svc {{ podname }} "
+  register: output
+- debug: var=output.stdout_lines
+
+
+- name: " get pod  "
+  shell: "oc get pods -l test=ansible -n {{ namespace }} "
+  register: output
+- debug: var=output.stdout_lines
+
+
+
+- name: " Describe pod  "
+  shell: "oc describe pod {{ podname }} -n {{ namespace }}  "
+  register: output
+- debug: var=output.stdout_lines
+
+
+- name: "NODES STATUS "
+  shell: " oc get pods -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,NodeName:.spec.nodeName,STATUS:.status.phase"
+  register: "output"
+- debug: var=output.stdout_lines
+
+
+
+
+
+
+
+- name: "run shell in pod"
+  shell: |
+    oc rsh {{ podname }} curl localhost
+  register: output
+- debug: var=output.stdout_lines

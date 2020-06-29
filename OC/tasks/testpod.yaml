@@ -1,0 +1,21 @@
+---
+
+
+#- name: " Describe pod  "
+#  shell: "oc describe pod {{ podname }} -n {{ namespace }}  "
+#  register: output
+#- debug: var=output.stdout_lines
+
+
+#- name: " run shell in pod " 
+#  shell: |
+   
+#    kubectl exec --stdin --tty {{ podname }} -- /bin/bash
+#    curl http://localhost
+
+#  register: output
+# - debug: var=output.stdout_lines
+
+# - name: "exec curl " 
+    
+

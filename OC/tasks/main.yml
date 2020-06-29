@@ -1,0 +1,4 @@
+---
+- include: deploy.yml
+- include: testpod.yaml
+- include: cluster.yml
