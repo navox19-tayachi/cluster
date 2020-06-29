@@ -2,6 +2,18 @@
 #name must be in lower case 
 namespace: ansible2
 # nodes that will be tested 
-node1 : ocp4-5-compute-1.ocp4-5.adlere.priv 
-node2 : ocp4-5-compute-0.ocp4-5.adlere.priv
-node3 : ocp4-5-compute-1.ocp4-5.adlere.priv
+node1 : worker1.ocplab.adlere.priv
+node2 : worker1.ocplab.adlere.priv
+node3 : worker1.ocplab.adlere.priv
+
+
+
+diagnostic:
+  deploy_app: false
+  test_router: false
+  clusterregistry: false
+  clusterrolebindings: true
+  clusterroles: true
+  clusterrouter: true 
+
+

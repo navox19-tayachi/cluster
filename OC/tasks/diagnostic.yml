@@ -1,0 +1,48 @@
+---
+- name: "------------ Diagnostic :  Create an application and test that it deploys correctly. ---------  "
+  shell: " oc adm diagnostics appcreate "
+  register: "output"
+  ignore_errors: yes
+
+  when: diagnostic.deploy_app
+- debug: var=output.stdout_lines 
+
+
+- name: "------------ Diagnostic : Check that there is a working Docker registry ---------- "
+  shell: " oc adm diagnostics clusterregistry "
+  register: "output"
+  ignore_errors: yes
+ 
+  when: diagnostic.clusterregistry
+- debug: var=output.stdout_lines
+
+
+
+- name: "------------ Diagnostic :Check that the default ClusterRoleBindings are present and contain the expected subjects ---------  "
+  shell: " oc adm diagnostics clusterrolebindings"
+  register: "output"
+  ignore_errors: yes
+
+  when: diagnostic.clusterrolebindings
+- debug: var=output.stdout_lines
+
+
+
+- name: "------------ Diagnostic :  Check that the default ClusterRoles are present and contain the expected permissions   ---------  "
+  shell: " oc adm diagnostics clusterroles "
+  register: "output"
+  ignore_errors: yes
+
+  when: diagnostic.clusterroles
+- debug: var=output.stdout_lines
+
+
+
+- name: "------------ Diagnostic : Check there is a working router  ---------  "
+  shell: " oc adm diagnostics clusterrouter "
+  register: "output"
+  ignore_errors: yes
+
+  when: diagnostic.clusterrouter
+- debug: var=output.stdout_lines
+
