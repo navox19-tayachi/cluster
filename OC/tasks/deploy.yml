@@ -84,11 +84,6 @@
 - debug: var=output.stdout_lines
 
 
-
-
-
-
-
 - name: "run shell in pod"
   shell: |
     oc rsh {{ podname }} curl localhost

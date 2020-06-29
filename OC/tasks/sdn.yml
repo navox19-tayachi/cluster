@@ -1,0 +1,43 @@
+---
+- name: Create openshift Namespace {{ namespace }}
+  shell: "oc create namespace {{ namespace }}"
+  register: "output"
+  ignore_errors: yes
+ 
+
+- debug: var=output.stdout_lines
+
+- name: " Deploy a httpd application " 
+  shell: "oc new-app centos/httpd-24-centos7~https://github.com/sclorg/httpd-ex"
+  register: "output2" 
+  ignore_errors: yes
+
+- debug: var=output2.stdout_lines
+
+- name: "waiting for deployments"
+  wait_for:
+    timeout: 25
+  delegate_to: localhost
+
+- name: " get all objects deployed "
+
+  shell: "oc get all -n {{ namespace }} "
+  register: "output"
+  ignore_errors: yes
+
+- debug: var=output.stdout_lines
+
+
+
+- name: Delete project {{ namespace }}
+  pause: prompt='Please confirm you want to delete the project  {{ namespace }}  press ENTER ! . or Press Ctrl+c then A  to abort'
+
+
+- name: "DELETE PROJECT "
+
+  shell: "oc delete namespace {{ namespace }} "
+
+  register: "output"
+  
+
+
