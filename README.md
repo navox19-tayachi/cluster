@@ -6,7 +6,6 @@ Ce role permet de tester , le deployment d'un pod sur un noeud spécifique , ain
 
 
 ``` 
-il faut changer le fichier variable 
 
 
 
