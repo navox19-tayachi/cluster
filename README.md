@@ -1,6 +1,5 @@
 
 
-
 Ce role permet de tester , le deployment d'un pod sur un noeud spécifique , ainsie que tester les composants principaux d'un cluster openshift 3.11
 
 Role Name
@@ -21,11 +20,9 @@ Edit  vars/main.yml, and any variables that can/should be set via parameters to 
 Example Playbook
 ----------------
 
-<<<<<<< HEAD
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 =======
-``` 
->>>>>>> 7ba48671d711e7dc7d181fdb1c57bc2ed73e5f53
+
 
     - hosts: localhost
       roles:
