@@ -1,10 +1,56 @@
 ---
-#name must be in lower case 
-namespace: ansible2
+#name of the namespace
+
+namespace: ansibledemoooo
+
+
 # nodes that will be tested 
-node1 : worker1.ocplab.adlere.priv
+
+node1 : worker3.ocplab.adlere.priv 
 node2 : worker1.ocplab.adlere.priv
 node3 : worker1.ocplab.adlere.priv
+
+#all: true 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -14,6 +60,13 @@ diagnostic:
   clusterregistry: false
   clusterrolebindings: true
   clusterroles: true
-  clusterrouter: true 
-
+  clusterrouter: true
+  configcontexts: true
+  analyzelogs: true
+  diagnosticpod: true
+  masternode: true
+  networkcheck: true 
+  nodedefinitions: true 
+  routecertificatevalidation: true
+  securitycontextconstraints: true
 

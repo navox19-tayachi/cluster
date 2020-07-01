@@ -5,6 +5,13 @@
 
 - debug: var=output.stdout_lines
 
+
+- name: "NODES capacity and usage "
+  shell: "oc adm top node"
+  register: "output"
+
+- debug: var=output.stdout_lines
+
 - name: Create a directory if it does not exist
   file:
     path: /root/template
@@ -45,7 +52,6 @@
 - debug:
     var: podname
 
-
 - name: " expose Pod {{ podname }}    "
   shell: "oc expose pod  {{ podname }}  --port=80 --target-port=80 --type=ClusterIP"
   register: output
@@ -55,9 +61,6 @@
   wait_for:
     timeout: 20
   delegate_to: localhost
-
-
-
 
 - name: " Describe exposed service  "
   shell: "oc describe svc {{ podname }} "
@@ -69,8 +72,6 @@
   shell: "oc get pods -l test=ansible -n {{ namespace }} "
   register: output
 - debug: var=output.stdout_lines
-
-
 
 - name: " Describe pod  "
   shell: "oc describe pod {{ podname }} -n {{ namespace }}  "
@@ -84,8 +85,13 @@
 - debug: var=output.stdout_lines
 
 
-- name: "run shell in pod"
+- name: "run curl command  in pod"
   shell: |
     oc rsh {{ podname }} curl localhost
   register: output
 - debug: var=output.stdout_lines
+
+
+
+#- name: "test your service " 
+ 

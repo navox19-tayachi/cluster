@@ -1,6 +1,6 @@
 ---
 - include: deploy.yml
-- include: testpod.yaml
-- include: cluster.yml
-- include: sdn.yml
-- include: diagnostic.yml
+#- include: testpod.yaml
+#- include: cluster.yml
+#- include: sdn.yml
+#- include: diagnostic.yml

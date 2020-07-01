@@ -2,6 +2,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: nginx
+  labels:
+    test: ansible
+
 spec:
   containers:
   -  image: nginx
