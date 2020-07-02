@@ -1,0 +1,6 @@
+Server:    192.168.39.31
+Address 1: 192.168.39.31 worker1.ocplab.adlere.priv
+
+Name:      nginx-32
+Address 1: 172.30.140.49 nginx-32.ansibledemoooo.svc.cluster.local
+pod "nginxaaaaaaaaae" deleted

@@ -53,7 +53,7 @@
     var: podname
 
 - name: " expose Pod {{ podname }}    "
-  shell: "oc expose pod  {{ podname }}  --port=80 --target-port=80 --type=ClusterIP"
+  shell: "oc expose pod  {{ podname }} --name={{ podname }}  --port=80 --target-port=80 --type=ClusterIP"
   register: output
 - debug: var=output.stdout_lines
 
@@ -64,6 +64,11 @@
 
 - name: " Describe exposed service  "
   shell: "oc describe svc {{ podname }} "
+  register: output
+- debug: var=output.stdout_lines
+
+- name: " Check DNS resolution inside pod  "
+  shell: "oc run {{ podname }}-{{ 100 | random }}  --image=busybox:1.28 --restart=Never --rm -it  nslookup {{ podname }} "
   register: output
 - debug: var=output.stdout_lines
 
