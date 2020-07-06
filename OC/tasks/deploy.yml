@@ -73,12 +73,12 @@
 - debug: var=output.stdout_lines
 
 
-- name: " get pod  "
+- name: " get  deployed pod  "
   shell: "oc get pods -l test=ansible -n {{ namespace }} "
   register: output
 - debug: var=output.stdout_lines
 
-- name: " Describe pod  "
+- name: " Describe pod {{ podname }} "
   shell: "oc describe pod {{ podname }} -n {{ namespace }}  "
   register: output
 - debug: var=output.stdout_lines
@@ -96,7 +96,5 @@
   register: output
 - debug: var=output.stdout_lines
 
-
-
-#- name: "test your service " 
+#- name: "test your inteliij "
  
