@@ -2,15 +2,13 @@
 
 Ce role permet de tester , le deployment d'un pod sur un noeud spécifique , ainsie que tester les composants principaux d'un cluster openshift 3.11
 
-Role Name
-=========
-
-e role permet de tester , le deployment d'un pod sur un noeud spécifique , ainsie que tester les composants principaux d'un cluster openshift 3.11
+ un noeud spécifique , ainsie que tester les composants principaux d'un cluster openshift 3.11
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+le role : cluster-admin 
+
 
 Role Variables
 --------------
@@ -31,7 +29,7 @@ Including an example of how to use your role (for instance, with variables passe
 License
 -------
 
-BPCE
+BPCE-IT
 
 Author Information
 ------------------
