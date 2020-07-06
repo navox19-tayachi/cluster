@@ -52,8 +52,6 @@
   when: diagnostic.clusterrouter
 - debug: var=output.stdout_lines
 
-
-
 - name: "------------ Diagnostic : Create a pod to run diagnostics from the application standpoint  ---------  "
   shell: " oc adm diagnostics diagnosticpod "
   register: "output"
@@ -89,7 +87,6 @@
   shell: " oc adm diagnostics securitycontextconstraints "
   register: "output"
   ignore_errors: yes
-
   when: diagnostic.securitycontextconstraints
 - debug: var=output.stdout_lines
 
@@ -97,7 +94,5 @@
   shell: " oc adm diagnostics analyzelogs "
   register: "output"
   ignore_errors: yes
-
   when: diagnostic.analyzelogs
 - debug: var=output.stdout_lines
-

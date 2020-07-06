@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx
+  name: nginx-{{ range(1, 500) | random }}
   labels:
     test: ansible
-
 spec:
   containers:
   -  image: nginx
-     name: nginx
+     name: nginx-{{ range(1, 500) | random }}
   nodeName: {{ node2 }}
+
