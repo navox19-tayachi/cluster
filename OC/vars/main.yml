@@ -1,7 +1,7 @@
 ---
 #the namespace that you will be working on
 
-namespace: ansibledemoooo
+namespace: ansibledemo
 
 # nodes names that will be tested
 
@@ -15,7 +15,7 @@ node5 : master2.ocplab.adlere.priv
 diagnostic:
   deploy_app: true  # deploy pod to all ready nodes
   test_router: true
-  clusterregistry: true
+  clusterregistry: false
   clusterrolebindings: true
   clusterroles: true
   clusterrouter: true
