@@ -1,18 +1,18 @@
 ---
-#the namespace that will be created
+#the namespace that you will be working on
 
 namespace: ansibledemoooo
 
 # nodes names that will be tested
 
-node1 : worker3.ocplab.adlere.priv 
-node2 : worker1.ocplab.adlere.priv
-node3 : worker1.ocplab.adlere.priv
+node1 : worker1.ocplab.adlere.priv
+node2 : worker2.ocplab.adlere.priv
+node3 : worker3.ocplab.adlere.priv
 
 #diagnostic your cluster by selecting tests that you want to run by wrinting true / false
 
 diagnostic:
-  deploy_app: true
+  deploy_app: true  # deploy pod to all ready nodes
   test_router: true
   clusterregistry: true
   clusterrolebindings: true
