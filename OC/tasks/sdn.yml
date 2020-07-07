@@ -20,13 +20,11 @@
   delegate_to: localhost
 
 - name: " get all objects deployed "
-
   shell: "oc get all -n {{ namespace }} "
   register: "output"
   ignore_errors: yes
 
 - debug: var=output.stdout_lines
-
 
 
 - name: Delete project {{ namespace }}

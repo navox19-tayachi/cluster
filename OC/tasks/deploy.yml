@@ -1,9 +1,4 @@
 ---
-- name: "NODES STATUS "
-  shell: "oc get nodes"
-  register: "output"
-
-- debug: var=output.stdout_lines
 
 
 - name: Create a directory if it does not exist
@@ -11,6 +6,13 @@
     path: /tmp/template
     state: directory
     mode: '0755'
+
+
+- name: "NODES STATUS "
+  shell: "oc get nodes"
+  register: "output"
+
+- debug: var=output.stdout_lines
 
 #- name: Create openshift Namespace {{ namespace }}
 #  shell: "oc create namespace {{ namespace }}"
@@ -39,13 +41,13 @@
 
 
 
-- name: Create pod in  NAMESPACE=  {{ namespace }} in NODE = {{ node1 }}
+- name: Create pod in  NAMESPACE= {{ namespace }} in NODE = {{ node1 }}
   shell: "oc create -f /root/template/pod1-{{ node1 }}.yaml "
   register: "output"
 - debug: var=output.stdout_lines
 
 - set_fact:
-    podname: "{{ output.stdout | regex_search(('nginx-[0-9]*')) }}"
+    podname1: "{{ output.stdout | regex_search(('nginx-[0-9]*')) }}"
 - debug:
     var: podname1
 
@@ -94,30 +96,24 @@
 
 
 
-
-
-
-
-
-
 - name: Create pod in  NAMESPACE=  {{ namespace }} in NODE = {{ node2 }}
   shell: "oc create -f /root/template/pod2-{{ node2 }}.yaml "
   register: "output"
 - debug: var=output.stdout_lines
 
 - set_fact:
-    podname: "{{ output.stdout | regex_search(('nginx-[0-9]*')) }}"
+    podname2: "{{ output.stdout | regex_search(('nginx-[0-9]*')) }}"
 - debug:
     var: podname2
 
-- name: " expose Pod {{ podname2 }}    "
+- name: " Expose Pod {{ podname2 }}    "
   shell: "oc expose pod  {{ podname2 }} --name={{ podname2 }}  --port=80 --target-port=80 --type=ClusterIP"
   register: output
 - debug: var=output.stdout_lines
 
-- name: "waiting for pod to be created 20 sec Timeout"
+- name: "Waiting for pod to be created in  NAMESPACE=  {{ namespace }} in NODE = {{ node2 }}  15 sec Timeout "
   wait_for:
-    timeout: 20
+    timeout: 15
   delegate_to: localhost
 
 - name: " Describe exposed service  "
@@ -130,7 +126,7 @@
   register: output
 - debug: var=output.stdout_lines
 
-- name: "run curl command  in pod"
+- name: "Run curl command  in pod"
   shell: |
     oc rsh {{ podname }} curl localhost
   register: output
@@ -142,9 +138,7 @@
   register: output
 - debug: var=output.stdout_lines
 
-
-
-- name: " get  deployed pod  "
+- name: " Get all deployed pod  "
   shell: "oc get pods -l test=ansible -n {{ namespace }} "
   register: output
 - debug: var=output.stdout_lines
@@ -153,12 +147,10 @@
 #- name : " delete deployed pod "
 #  shell: " oc delete pods -l test=ansible -n {{ namespace }}"
 
-
 - name: "NODES STATUS "
-  shell: " oc get pods -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,NodeName:.spec.nodeName,STATUS:.status.phase"
+  shell: " oc get pods -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,NodeName:.spec.nodeName,POD-STATUS:.status.phase"
   register: "output"
 - debug: var=output.stdout_lines
-
 
 - name: "NODES capacity and usage "
   shell: "oc adm top node"
