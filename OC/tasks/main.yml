@@ -1,5 +1,12 @@
 ---
+
+
+- include: generate.yml
 - include: deploy.yml
-#- include: testpod.yaml
-#- include: sdn.yml
+- include: deploy2.yaml
+- include: deploy3.yaml
+- include: deploy4.yaml
+- include: deploy5.yaml
 - include: diagnostic.yml
+- include: delete.yml
+#- include: sdn.yml

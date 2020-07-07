@@ -1,0 +1,21 @@
+---
+
+- name: Create a directory if it does not exist
+  file:
+    path: /tmp/template
+    state: directory
+    mode: '0755'
+
+
+- name: Generating openshift templates for pods
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0777
+  with_items:
+    - {src: 'pod1.yaml',dest: '/root/template/pod1-{{ node1 }}.yaml'}
+    - {src: 'pod2.yaml',dest: '/root/template/pod2-{{ node2 }}.yaml'}
+    - {src: 'pod3.yaml',dest: '/root/template/pod3-{{ node3 }}.yaml'}
+    - {src: 'pod4.yaml',dest: '/root/template/pod4-{{ node4 }}.yaml'}
+    - {src: 'pod5.yaml',dest: '/root/template/pod5-{{ node5 }}.yaml'}
+

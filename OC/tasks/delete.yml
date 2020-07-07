@@ -1,0 +1,8 @@
+---
+
+- name : " Delete all deployed pods and services "
+  shell: " oc delete all -l test=ansible -n {{ namespace }}"
+  register: "output"
+
+- debug: var=output.stdout_lines
+

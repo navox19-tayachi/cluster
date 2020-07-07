@@ -5,10 +5,11 @@ namespace: ansibledemoooo
 
 # nodes names that will be tested
 
-node1 : worker1.ocplab.adlere.priv
+node1 : worker1.ocplab.adlere.priv 
 node2 : worker2.ocplab.adlere.priv
 node3 : worker3.ocplab.adlere.priv
-
+node4 : master1.ocplab.adlere.priv
+node5 : master2.ocplab.adlere.priv
 #diagnostic your cluster by selecting tests that you want to run by wrinting true / false
 
 diagnostic:

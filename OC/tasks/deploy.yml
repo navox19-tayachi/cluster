@@ -1,11 +1,10 @@
 ---
 
-
-- name: Create a directory if it does not exist
-  file:
-    path: /tmp/template
-    state: directory
-    mode: '0755'
+#- name: Create a directory if it does not exist
+#  file:
+#    path: /tmp/template
+#    state: directory
+#    mode: '0755'
 
 
 - name: "NODES STATUS "
@@ -14,12 +13,6 @@
 
 - debug: var=output.stdout_lines
 
-#- name: Create openshift Namespace {{ namespace }}
-#  shell: "oc create namespace {{ namespace }}"
-#  register: "output"
-#  ignore_errors: yes
-
-#- debug: var=output.stdout_lines
 
 - name: pointe to the project
   shell: "oc project {{ namespace }}"
@@ -27,17 +20,17 @@
 
 - debug: var=output.stdout_lines
 
-- name: Generating openshift templates for pods
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    mode: 0777
-  with_items:
-    - {src: 'pod1.yaml',dest: '/root/template/pod1-{{ node1 }}.yaml'}
-    - {src: 'pod2.yaml',dest: '/root/template/pod2-{{ node2 }}.yaml'}
-    - {src: 'pod3.yaml',dest: '/root/template/pod3-{{ node3 }}.yaml'}
-    - {src: 'pod4.yaml',dest: '/root/template/pod4-{{ node4 }}.yaml'}
-    - {src: 'pod5.yaml',dest: '/root/template/pod5-{{ node5 }}.yaml'}
+#- name: Generating openshift templates for pods
+#  template:
+#    src: "{{ item.src }}"
+#    dest: "{{ item.dest }}"
+#    mode: 0777
+#  with_items:
+#    - {src: 'pod1.yaml',dest: '/root/template/pod1-{{ node1 }}.yaml'}
+#    - {src: 'pod2.yaml',dest: '/root/template/pod2-{{ node2 }}.yaml'}
+#    - {src: 'pod3.yaml',dest: '/root/template/pod3-{{ node3 }}.yaml'}
+#    - {src: 'pod4.yaml',dest: '/root/template/pod4-{{ node4 }}.yaml'}
+#    - {src: 'pod5.yaml',dest: '/root/template/pod5-{{ node5 }}.yaml'}
 
 
 
@@ -51,91 +44,53 @@
 - debug:
     var: podname1
 
-- name: " expose Pod {{ podname1 }}    "
-  shell: "oc expose pod  {{ podname1 }} --name={{ podname1 }}  --port=80 --target-port=80 --type=ClusterIP"
-  register: output
-- debug: var=output.stdout_lines
 
-- name: "waiting for pod to be created 20 sec Timeout"
+- name: "Waiting for pod to be created in  NAMESPACE=  {{ namespace }} in NODE = {{ node1 }}  20 sec Timeout "
   wait_for:
     timeout: 20
   delegate_to: localhost
 
+
+#- name: " Get all deployed pod  "
+#  shell: "oc get pods -l test=ansible -n {{ namespace }} "
+#  register: output
+#- debug: var=output.stdout_lines
+
+- name: " expose Pod {{ podname1 }}    "
+  shell: "oc expose pod  {{ podname1 }} --name={{ podname1 }}  --port=80 --target-port=80 --type=ClusterIP"
+  register: output
+  ignore_errors: yes
+
+- debug: var=output.stdout_lines
+
+
 - name: " Describe exposed service  "
   shell: "oc describe svc {{ podname1 }} "
   register: output
+  ignore_errors: yes
+
 - debug: var=output.stdout_lines
 
 - name: " Check DNS resolution inside pod  "
   shell: "oc run {{ podname1 }}-{{ 100 | random }}  --image=busybox:1.28 --restart=Never --rm -it  nslookup {{ podname1 }} "
   register: output
+  ignore_errors: yes
+
 - debug: var=output.stdout_lines
 
-- name: "run curl command  in pod"
+- name: "run curl command  in pod {{ podname1 }} "
   shell: |
-    oc rsh {{ podname }} curl localhost
+    oc rsh {{ podname1 }} curl localhost
   register: output
-- debug: var=output.stdout_lines
+  ignore_errors: yes
 
+- debug: var=output.stdout_lines
 
 - name: " Describe pod {{ podname1 }} "
   shell: "oc describe pod {{ podname1 }} -n {{ namespace }}  "
   register: output
-- debug: var=output.stdout_lines
+  ignore_errors: yes
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-- name: Create pod in  NAMESPACE=  {{ namespace }} in NODE = {{ node2 }}
-  shell: "oc create -f /root/template/pod2-{{ node2 }}.yaml "
-  register: "output"
-- debug: var=output.stdout_lines
-
-- set_fact:
-    podname2: "{{ output.stdout | regex_search(('nginx-[0-9]*')) }}"
-- debug:
-    var: podname2
-
-- name: " Expose Pod {{ podname2 }}    "
-  shell: "oc expose pod  {{ podname2 }} --name={{ podname2 }}  --port=80 --target-port=80 --type=ClusterIP"
-  register: output
-- debug: var=output.stdout_lines
-
-- name: "Waiting for pod to be created in  NAMESPACE=  {{ namespace }} in NODE = {{ node2 }}  15 sec Timeout "
-  wait_for:
-    timeout: 15
-  delegate_to: localhost
-
-- name: " Describe exposed service  "
-  shell: "oc describe svc {{ podname2 }} "
-  register: output
-- debug: var=output.stdout_lines
-
-- name: " Check DNS resolution inside pod  "
-  shell: "oc run {{ podname2 }}-{{ 100 | random }}  --image=busybox:1.28 --restart=Never --rm -it  nslookup {{ podname1 }} "
-  register: output
-- debug: var=output.stdout_lines
-
-- name: "Run curl command  in pod"
-  shell: |
-    oc rsh {{ podname }} curl localhost
-  register: output
-- debug: var=output.stdout_lines
-
-
-- name: " Describe pod {{ podname2 }} "
-  shell: "oc describe pod {{ podname2 }} -n {{ namespace }}  "
-  register: output
 - debug: var=output.stdout_lines
 
 - name: " Get all deployed pod  "
@@ -144,19 +99,15 @@
 - debug: var=output.stdout_lines
 
 
-#- name : " delete deployed pod "
-#  shell: " oc delete pods -l test=ansible -n {{ namespace }}"
-
-- name: "NODES STATUS "
+- name: "POD status in NODES  "
   shell: " oc get pods -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,NodeName:.spec.nodeName,POD-STATUS:.status.phase"
   register: "output"
 - debug: var=output.stdout_lines
 
+
 - name: "NODES capacity and usage "
-  shell: "oc adm top node"
+  shell: "oc adm top node" 
+  ignore_errors: yes
   register: "output"
 
 - debug: var=output.stdout_lines
-
-#- name: "test your inteliij 2 "
- 

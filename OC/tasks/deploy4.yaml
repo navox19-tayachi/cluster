@@ -1,0 +1,70 @@
+---
+
+- name: Create pod in  NAMESPACE=  {{ namespace }} in NODE = {{ node4 }}
+  shell: "oc create -f /root/template/pod4-{{ node4 }}.yaml "
+  register: "output"
+  when: node4 is defined
+- debug: var=output.stdout_lines
+
+- set_fact:
+    podname2: "{{ output.stdout | regex_search(('nginx-[0-9]*')) }}"
+- debug:
+    var: podname2
+
+- name: "Waiting for pod to be created in  NAMESPACE=  {{ namespace }} in NODE = {{ node4 }}  20 sec Timeout "
+  wait_for:
+    timeout: 20
+  delegate_to: localhost
+
+
+- name: " Get all deployed pod  "
+  shell: "oc get pods -l test=ansible -n {{ namespace }} "
+  register: output
+- debug: var=output.stdout_lines
+
+
+- name: " Expose Pod {{ podname2 }}    "
+  shell: "oc expose pod  {{ podname2 }} --name={{ podname2 }}  --port=80 --target-port=80 --type=ClusterIP"
+  register: output
+- debug: var=output.stdout_lines
+
+
+
+- name: " Describe exposed service  "
+  shell: "oc describe svc {{ podname2 }} "
+  register: output
+- debug: var=output.stdout_lines
+
+- name: " Check DNS resolution inside pod  "
+  shell: "oc run {{ podname2 }}-{{ 100 | random }}  --image=busybox:1.28 --restart=Never --rm -it  nslookup {{ podname1 }} "
+  register: output
+  ignore_errors: yes
+
+- debug: var=output.stdout_lines
+
+- name: "Run curl command  in pod  {{ podname2 }} "
+  shell: |
+    oc rsh {{ podname2 }} curl localhost
+  register: output
+  ignore_errors: yes
+- debug: var=output.stdout_lines
+
+
+- name: " Describe pod {{ podname2 }} "
+  shell: "oc describe pod {{ podname2 }} -n {{ namespace }}  "
+  register: output
+- debug: var=output.stdout_lines
+
+- name: " Get all deployed pod  "
+  shell: "oc get pods -l test=ansible -n {{ namespace }} "
+  register: output
+- debug: var=output.stdout_lines
+
+
+
+- name: "POD status in NODES  "
+  shell: " oc get pods -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,NodeName:.spec.nodeName,POD-STATUS:.status.phase"
+  register: "output"
+- debug: var=output.stdout_lines
+
+
